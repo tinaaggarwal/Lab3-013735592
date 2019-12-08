@@ -22,4 +22,20 @@ const loginOwnerMutation = gql`
   }
 `;
 
-export { loginClientMutation, loginOwnerMutation };
+const signupClientMutation = gql`
+  mutation signupClient($firstName: String, $lastName: String, $email: String, $password: String) {
+    signupClient(firstName: $firstName, lastName: $lastName, email: $email, password: $password) {
+      status
+    }
+  }
+`;
+
+const signupOwnerMutation = gql`
+  mutation signupOwner($firstName: String, $lastName: String, $email: String, $restaurantName: String, $restaurantZipCode: String, $password: String) {
+    signupOwner(firstName: $firstName, lastName: $lastName, email: $email, restaurantName: $restaurantName, restaurantZipCode: $restaurantZipCode, password: $password) {
+      status
+    }
+  }
+`;
+
+export { loginClientMutation, loginOwnerMutation, signupClientMutation, signupOwnerMutation };

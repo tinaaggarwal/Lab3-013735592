@@ -45,14 +45,10 @@ class OwnerLogin extends Component {
     submitLogin = (e) => {
         //prevent page from refresh
         e.preventDefault();
-        const data = {
-            email: this.state.email,
-            password: this.state.password
-        }
         this.props.loginOwnerMutation({
             variables: {
-              email: data.email,
-              password: data.password,
+                email: this.state.email,
+                password: this.state.password
             },
         }).then(response => {
             this.setState({

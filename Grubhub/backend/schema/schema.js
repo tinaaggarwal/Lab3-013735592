@@ -1,14 +1,23 @@
 const graphql = require("graphql");
 var mysql = require("mysql");
+// var pool = mysql.createPool({
+//   connectionLimit: 100,
+//   port: "3306",
+//   host: "lab3-grubhub.cv9vraaep5ay.us-west-2.rds.amazonaws.com",
+//   user: "root",
+//   password: "root.1234",
+//   database: "grubhub",
+//   debug: false
+// });
+
 var pool = mysql.createPool({
-  connectionLimit: 100,
-  port: "3306",
-  host: "lab3-grubhub.cv9vraaep5ay.us-west-2.rds.amazonaws.com",
-  user: "root",
-  password: "root.1234",
-  database: "grubhub",
-  debug: false
-});
+    connectionLimit: 100,
+    host: 'localhost',
+    user: 'root',
+    password: 'Tina.1234',
+    database: 'grubhub',
+    debug: false
+})
 
 var clientEmail = "";
 var ownerEmail = "";
@@ -42,7 +51,8 @@ const ClientType = new GraphQLObjectType({
     cross_street: { type: GraphQLString },
     delivery_instructions: { type: GraphQLString },
     address_name: { type: GraphQLString },
-    profile_image: { type: GraphQLString }
+    profile_image: { type: GraphQLString },
+    status: { type: GraphQLInt }
   })
 });
 
@@ -62,7 +72,8 @@ const OwnerType = new GraphQLObjectType({
     rest_name: { type: GraphQLString },
     rest_image: { type: GraphQLString },
     cuisine: { type: GraphQLString },
-    rest_zip_code: { type: GraphQLString }
+    rest_zip_code: { type: GraphQLString },
+    status: { type: GraphQLInt }
   })
 });
 
@@ -120,6 +131,44 @@ const Mutation = new GraphQLObjectType({
         });
       }
     },
+    signupClient: {
+      type: ClientType,
+      args: {
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
+        email: { type: GraphQLString },
+        password: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        var sql =
+          "INSERT INTO client_signup VALUES ( " +
+          mysql.escape(args.firstName) +
+          " , " +
+          mysql.escape(args.lastName) +
+          " , " +
+          mysql.escape(args.email) +
+          " , " +
+          mysql.escape(args.password) +
+          " ) ";
+        pool.query(sql, function(err, result) {
+          console.log("result", result);
+          var res = {};
+          if (err) {
+            res.status = 400;
+            return res;
+          } else {
+            res.status = 200;
+            var sql1 =
+              "INSERT INTO client_update (client_email) VALUES (" +
+              mysql.escape(args.email) +
+              ")";
+            pool.query(sql1);
+            return res;
+          }
+          return result;
+        });
+      }
+    },
     loginOwner: {
       type: OwnerType,
       args: {
@@ -153,6 +202,60 @@ const Mutation = new GraphQLObjectType({
               }
             });
           }
+        });
+      }
+    },
+    signupOwner: {
+      type: OwnerType,
+      args: {
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
+        email: { type: GraphQLString },
+        restaurantName: { type: GraphQLString },
+        restaurantZipCode: { type: GraphQLString },
+        password: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        var sql =
+          "INSERT INTO owner_signup (first_name, last_name, owner_email, restaurant_name, restaurant_zip_code, password) VALUES ( " +
+          mysql.escape(args.firstName) +
+          " , " +
+          mysql.escape(args.lastName) +
+          " , " +
+          mysql.escape(args.email) +
+          " , " +
+          mysql.escape(args.restaurantName) +
+          " , " +
+          mysql.escape(args.restaurantZipCode) +
+          " , " +
+          mysql.escape(args.password) +
+          " ) ";
+        console.log(sql);
+        pool.query(sql, function(err, result) {
+          console.log("result", result);
+          var res = {};
+          if (err) {
+            res.status = 400;
+            return res;
+          } else {
+            res.status = 200;
+            var sql1 =
+            "INSERT INTO owner_profile (first_name, last_name, owner_email, rest_name, rest_zip_code) VALUES ( " +
+            mysql.escape(args.firstName) +
+            " , " +
+            mysql.escape(args.lastName) +
+            " , " +
+            mysql.escape(args.email) +
+            " , " +
+            mysql.escape(args.restaurantName) +
+            " , " +
+            mysql.escape(args.restaurantZipCode) +
+            " ) ";
+            console.log(sql1);
+            pool.query(sql1);
+            return res;
+          }
+          return result;
         });
       }
     }

@@ -131,26 +131,26 @@ app.use(function (req, res, next) {
 
 // });
 
-app.post('/clientSignup', function (req, res) {
-    console.log("Inside Client Create Request Handler");
-    var sql = "INSERT INTO client_signup VALUES ( " +
-        mysql.escape(req.body.firstName) + " , " + mysql.escape(req.body.lastName) + " , " + mysql.escape(req.body.email) + " , " +
-        mysql.escape(req.body.password) + " ) ";
-    console.log(sql);
-    pool.query(sql, function (err, result) {
-        if (err) {
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
-            res.end("Error While Signing up Client");
-        } else {
-            res.writeHead(200, {
-                'Content-Type': 'text/plain'
-            })
-            res.end('Client Created Successfully');
-        }
-    });
-});
+// app.post('/clientSignup', function (req, res) {
+//     console.log("Inside Client Create Request Handler");
+//     var sql = "INSERT INTO client_signup VALUES ( " +
+//         mysql.escape(req.body.firstName) + " , " + mysql.escape(req.body.lastName) + " , " + mysql.escape(req.body.email) + " , " +
+//         mysql.escape(req.body.password) + " ) ";
+//     console.log(sql);
+//     pool.query(sql, function (err, result) {
+//         if (err) {
+//             res.writeHead(400, {
+//                 'Content-Type': 'text/plain'
+//             })
+//             res.end("Error While Signing up Client");
+//         } else {
+//             res.writeHead(200, {
+//                 'Content-Type': 'text/plain'
+//             })
+//             res.end('Client Created Successfully');
+//         }
+//     });
+// });
 
 // app.post('/ownerLogin', function (req, res) {
 //     console.log("Inside Owner Login Post Request");
@@ -190,26 +190,26 @@ app.post('/clientSignup', function (req, res) {
 //     });
 // });
 
-app.post('/ownerSignup', function (req, res) {
-    console.log("Inside Owner Create Request Handler");
-    var sql = "INSERT INTO owner_signup (first_name, last_name, owner_email, restaurant_name, restaurant_zip_code, password) VALUES ( " +
-        mysql.escape(req.body.firstName) + " , " + mysql.escape(req.body.lastName) + " , " + mysql.escape(req.body.email) + " , " + mysql.escape(req.body.restaurantName) + " , " + mysql.escape(req.body.restaurantZipCode) + " , " + mysql.escape(req.body.password) + " ) ";
-    console.log(sql);
+// app.post('/ownerSignup', function (req, res) {
+//     console.log("Inside Owner Create Request Handler");
+//     var sql = "INSERT INTO owner_signup (first_name, last_name, owner_email, restaurant_name, restaurant_zip_code, password) VALUES ( " +
+//         mysql.escape(req.body.firstName) + " , " + mysql.escape(req.body.lastName) + " , " + mysql.escape(req.body.email) + " , " + mysql.escape(req.body.restaurantName) + " , " + mysql.escape(req.body.restaurantZipCode) + " , " + mysql.escape(req.body.password) + " ) ";
+//     console.log(sql);
 
-    pool.query(sql, function (err, result) {
-        if (err) {
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
-            res.end("Error While Signing up Owner");
-        } else {
-            res.writeHead(200, {
-                'Content-Type': 'text/plain'
-            })
-            res.end('Owner Created Successfully');
-        }
-    });
-});
+//     pool.query(sql, function (err, result) {
+//         if (err) {
+//             res.writeHead(400, {
+//                 'Content-Type': 'text/plain'
+//             })
+//             res.end("Error While Signing up Owner");
+//         } else {
+//             res.writeHead(200, {
+//                 'Content-Type': 'text/plain'
+//             })
+//             res.end('Owner Created Successfully');
+//         }
+//     });
+// });
 
 app.get('/userUpdate', function (req, res) {
     console.log(clientEmail)
