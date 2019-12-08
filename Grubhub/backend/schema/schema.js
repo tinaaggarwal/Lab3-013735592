@@ -13,6 +13,7 @@ var pool = mysql.createPool({
 var clientEmail = "";
 var ownerEmail = "";
 var sessionResponse = "";
+var imageId;
 
 const {
   GraphQLObjectType,
@@ -32,7 +33,6 @@ const ClientType = new GraphQLObjectType({
     last_name: { type: GraphQLString },
     client_email: { type: GraphQLString },
     password: { type: GraphQLString },
-    type: { type: GraphQLString },
     street_address: { type: GraphQLString },
     apt: { type: GraphQLString },
     city: { type: GraphQLString },
@@ -43,6 +43,26 @@ const ClientType = new GraphQLObjectType({
     delivery_instructions: { type: GraphQLString },
     address_name: { type: GraphQLString },
     profile_image: { type: GraphQLString }
+  })
+});
+
+const OwnerType = new GraphQLObjectType({
+  name: "Owner",
+  fields: () => ({
+    id: { type: GraphQLID },
+    first_name: { type: GraphQLString },
+    last_name: { type: GraphQLString },
+    owner_email: { type: GraphQLString },
+    password: { type: GraphQLString },
+    restaurant_name: { type: GraphQLString },
+    restaurant_zip_code: { type: GraphQLString },
+    r_id: { type: GraphQLString },
+    profile_image: { type: GraphQLString },
+    phone: { type: GraphQLString },
+    rest_name: { type: GraphQLString },
+    rest_image: { type: GraphQLString },
+    cuisine: { type: GraphQLString },
+    rest_zip_code: { type: GraphQLString }
   })
 });
 
@@ -75,6 +95,7 @@ const Mutation = new GraphQLObjectType({
         password: { type: GraphQLString }
       },
       resolve(parent, args) {
+        clientEmail = args.email;
         var sql =
           "SELECT *  FROM client_signup WHERE client_email = " +
           mysql.escape(args.email) +
@@ -90,9 +111,44 @@ const Mutation = new GraphQLObjectType({
                 return;
               } else {
                 sessionResponse = JSON.parse(JSON.stringify(result));
-                console.log(sessionResponse);
                 clientEmail = sessionResponse[0].clientEmail;
                 console.log("clientEmail", sessionResponse[0].client_email);
+                return result;
+              }
+            });
+          }
+        });
+      }
+    },
+    loginOwner: {
+      type: OwnerType,
+      args: {
+        email: { type: GraphQLString },
+        password: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        ownerEmail = args.email;
+        var sql =
+          "SELECT *  FROM owner_signup WHERE owner_email = " +
+          mysql.escape(ownerEmail) +
+          "and password = " +
+          mysql.escape(args.password);
+
+        console.log(sql);
+        pool.getConnection(function(err, pool) {
+          if (err) {
+            return err;
+          } else {
+            pool.query(sql, function(err, result) {
+              if (result.length == 0) {
+                return;
+              } else {
+                sessionResponse = JSON.parse(JSON.stringify(result));
+                console.log(sessionResponse);
+                clientEmail = sessionResponse[0].clientEmail;
+                console.log("r_id", sessionResponse[0].r_id);
+                imageId = sessionResponse[0].r_id;
+                console.log("owner Email", sessionResponse[0].owner_email);
                 return result;
               }
             });

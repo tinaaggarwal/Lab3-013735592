@@ -92,10 +92,10 @@ class ClientHomePage extends Component {
     render() {
 
         //if not logged in go to login page
-        let redirectVar = null;
-        if (!cookie.load('cookie')) {
-            redirectVar = <Redirect to="/login" />
-        }
+        // let redirectVar = null;
+        // if (!cookie.load('cookie')) {
+        //     redirectVar = <Redirect to="/login" />
+        // }
 
         var options = [<option value="---" key="null">---</option>];
         var moreOptions = this.state.cuisines.map(cuisine => {
@@ -121,7 +121,7 @@ class ClientHomePage extends Component {
 
         return (
             <div className="container">
-                {redirectVar}
+                {/* {redirectVar} */}
                 <div className="searchLayout">
                     <input type="text" className="form-control" name="searchBox" onChange={this.searchBoxChangeHandler} placeholder="Item name (E.g. Pizza)" />
                     <button onClick={this.submitSearch} className="searchbar">

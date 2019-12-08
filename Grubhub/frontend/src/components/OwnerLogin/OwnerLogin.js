@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 // import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
+import { graphql, compose } from 'react-apollo';
+import { loginOwnerMutation } from '../../mutation/mutation';
 
 class OwnerLogin extends Component {
 
@@ -48,22 +49,16 @@ class OwnerLogin extends Component {
             email: this.state.email,
             password: this.state.password
         }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
-        //make a post request with the user data
-        axios.post('http://localhost:3001/ownerLogin', data)
-            .then(response => {
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    this.setState({
-                        authFlag: true
-                    })
-                } else {
-                    this.setState({
-                        authFlag: false
-                    })
-                }
+        this.props.loginOwnerMutation({
+            variables: {
+              email: data.email,
+              password: data.password,
+            },
+        }).then(response => {
+            this.setState({
+                authFlag: true
             });
+        });
     }
 
     render() {
@@ -106,4 +101,6 @@ class OwnerLogin extends Component {
     }
 }
 
-export default OwnerLogin;
+export default compose(
+    graphql(loginOwnerMutation, { name: "loginOwnerMutation" })
+)(OwnerLogin);

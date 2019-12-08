@@ -89,47 +89,47 @@ app.use(function (req, res, next) {
     next();
 });
 
-//Route to handle Post Request Call
-app.post('/clientLogin', function (req, res) {
+// //Route to handle Post Request Call
+// app.post('/clientLogin', function (req, res) {
 
-    console.log("Inside Client Login Post Request");
-    clientEmail = req.body.email;
-    var password = req.body.password;
-    var sql = "SELECT *  FROM client_signup WHERE client_email = " +
-        mysql.escape(clientEmail) + "and password = " + mysql.escape(password);
-    console.log(sql)
-    pool.getConnection(function (err, pool) {
-        if (err) {
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
-            res.end("Could Not Get Connection Object");
-        } else {
-            pool.query(sql, function (err, result) {
-                console.log(result)
-                if (result.length == 0) {
-                    console.log('hello');
-                    res.writeHead(400, {
-                        'Content-Type': 'text/plain'
-                    })
-                    res.end("Invalid Credentials");
-                } else {
-                    res.cookie('cookie', 'client', { maxAge: 900000, httpOnly: false, path: '/' });
-                    req.session.user = result;
-                    sessionResponse = JSON.parse((JSON.stringify(req.session.user)));
-                    imageId = sessionResponse[0].client_email;
-                    console.log('imageId....', imageId);
-                    console.log("client_email", sessionResponse[0].client_email);
-                    res.writeHead(200, {
-                        'Content-Type': 'text/plain'
-                    })
-                    res.end("Successful Login");
-                }
-            });
-        }
-    });
+//     console.log("Inside Client Login Post Request");
+//     clientEmail = req.body.email;
+//     var password = req.body.password;
+//     var sql = "SELECT *  FROM client_signup WHERE client_email = " +
+//         mysql.escape(clientEmail) + "and password = " + mysql.escape(password);
+//     console.log(sql)
+//     pool.getConnection(function (err, pool) {
+//         if (err) {
+//             res.writeHead(400, {
+//                 'Content-Type': 'text/plain'
+//             })
+//             res.end("Could Not Get Connection Object");
+//         } else {
+//             pool.query(sql, function (err, result) {
+//                 console.log(result)
+//                 if (result.length == 0) {
+//                     console.log('hello');
+//                     res.writeHead(400, {
+//                         'Content-Type': 'text/plain'
+//                     })
+//                     res.end("Invalid Credentials");
+//                 } else {
+//                     res.cookie('cookie', 'client', { maxAge: 900000, httpOnly: false, path: '/' });
+//                     req.session.user = result;
+//                     sessionResponse = JSON.parse((JSON.stringify(req.session.user)));
+//                     imageId = sessionResponse[0].client_email;
+//                     console.log('imageId....', imageId);
+//                     console.log("client_email", sessionResponse[0].client_email);
+//                     res.writeHead(200, {
+//                         'Content-Type': 'text/plain'
+//                     })
+//                     res.end("Successful Login");
+//                 }
+//             });
+//         }
+//     });
 
-});
+// });
 
 app.post('/clientSignup', function (req, res) {
     console.log("Inside Client Create Request Handler");
@@ -152,47 +152,43 @@ app.post('/clientSignup', function (req, res) {
     });
 });
 
-app.post('/ownerLogin', function (req, res) {
-
-    console.log("Inside Owner Login Post Request");
-    ownerEmail = req.body.email;
-    var password = req.body.password;
-    var sql = "SELECT *  FROM owner_signup WHERE owner_email = " +
-        mysql.escape(ownerEmail) + "and password = " + mysql.escape(password);
-
-
-    pool.getConnection(function (err, pool) {
-        if (err) {
-            res.writeHead(400, {
-                'Content-Type': 'text/plain'
-            })
-            res.end("Could Not Get Connection Object");
-        } else {
-            pool.query(sql, function (err, result) {
-                if (result.length == 0) {
-                    console.log("hello");
-                    res.writeHead(400, {
-                        'Content-Type': 'text/plain'
-                    })
-                    res.end("Invalid Credentials");
-                } else {
-                    res.cookie('cookie', 'owner', { maxAge: 900000, httpOnly: false, path: '/' });
-                    req.session.user = result;
-                    sessionResponse = JSON.parse((JSON.stringify(req.session.user)));
-                    console.log("r_id", sessionResponse[0].r_id);
-                    imageId = sessionResponse[0].r_id;
-                    console.log("imageId........", imageId);
-                    console.log("owner_email", sessionResponse[0].owner_email);
-                    res.writeHead(200, {
-                        'Content-Type': 'text/plain'
-                    })
-                    res.end("Successful Login");
-                }
-            });
-        }
-    });
-
-});
+// app.post('/ownerLogin', function (req, res) {
+//     console.log("Inside Owner Login Post Request");
+//     ownerEmail = req.body.email;
+//     var password = req.body.password;
+//     var sql = "SELECT *  FROM owner_signup WHERE owner_email = " +
+//         mysql.escape(ownerEmail) + "and password = " + mysql.escape(password);
+//     pool.getConnection(function (err, pool) {
+//         if (err) {
+//             res.writeHead(400, {
+//                 'Content-Type': 'text/plain'
+//             })
+//             res.end("Could Not Get Connection Object");
+//         } else {
+//             pool.query(sql, function (err, result) {
+//                 if (result.length == 0) {
+//                     console.log("hello");
+//                     res.writeHead(400, {
+//                         'Content-Type': 'text/plain'
+//                     })
+//                     res.end("Invalid Credentials");
+//                 } else {
+//                     res.cookie('cookie', 'owner', { maxAge: 900000, httpOnly: false, path: '/' });
+//                     req.session.user = result;
+//                     sessionResponse = JSON.parse((JSON.stringify(req.session.user)));
+//                     console.log("r_id", sessionResponse[0].r_id);
+//                     imageId = sessionResponse[0].r_id;
+//                     console.log("imageId........", imageId);
+//                     console.log("owner_email", sessionResponse[0].owner_email);
+//                     res.writeHead(200, {
+//                         'Content-Type': 'text/plain'
+//                     })
+//                     res.end("Successful Login");
+//                 }
+//             });
+//         }
+//     });
+// });
 
 app.post('/ownerSignup', function (req, res) {
     console.log("Inside Owner Create Request Handler");
