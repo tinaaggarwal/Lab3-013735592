@@ -3,6 +3,8 @@ import axios from 'axios';
 // import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
+import { graphql, compose } from 'react-apollo';
+import { loginClientMutation } from '../../mutation/mutation';
 
 class ClientLogin extends Component {
 
@@ -48,22 +50,16 @@ class ClientLogin extends Component {
             email: this.state.email,
             password: this.state.password
         }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
-        //make a post request with the user data
-        axios.post('http://localhost:3001/clientLogin', data)
-            .then(response => {
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    this.setState({
-                        authFlag: true
-                    })
-                } else {
-                    this.setState({
-                        authFlag: false
-                    })
-                }
+        this.props.loginClientMutation({
+            variables: {
+              email: data.email,
+              password: data.password,
+            },
+        }).then(response => {
+            this.setState({
+                authFlag: true
             });
+        });
     }
 
     render() {
@@ -106,4 +102,6 @@ class ClientLogin extends Component {
     }
 }
 
-export default ClientLogin;
+export default compose(
+    graphql(loginClientMutation, { name: "loginClientMutation" })
+)(ClientLogin);
