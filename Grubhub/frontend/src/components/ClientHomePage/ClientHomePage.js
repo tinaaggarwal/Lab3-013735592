@@ -4,6 +4,9 @@ import { Redirect, withRouter } from 'react-router';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './ClientHomePage.css';
+import { restaurantList } from './../../queries/queries ';
+import { graphql, compose } from "react-apollo";
+import { restaurantListMutation } from "../../mutation/mutation";
 
 class ClientHomePage extends Component {
 
@@ -24,13 +27,31 @@ class ClientHomePage extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:3001/restaurantList')
-            .then((response) => {
-                console.log(response.data);
-                this.setState({
-                    restaurants: response.data
-                });
+        // axios.get('http://localhost:3001/restaurantList')
+        //     .then((response) => {
+        //         console.log(response.data);
+        //         this.setState({
+        //             restaurants: response.data
+        //         });
+        //     });
+            // this.props.client.query({
+            //     query : restaurantList,
+            // }).then(r => r)
+            // .then(data => console.log('data returned:', data));
+            // .then(response => {
+            //     // console.log('data....', response.data);
+                
+            //     console.log(response);
+            // })
+
+        this.props
+        .restaurantListMutation({})
+        .then(response => {
+            console.log(response);
+            this.setState({
+            authFlag: true
             });
+        });
 
         axios.get('http://localhost:3001/nextOrderId')
             .then((response) => {
@@ -142,5 +163,6 @@ class ClientHomePage extends Component {
     }
 }
 
-export default withRouter(ClientHomePage);
-
+export default compose(
+    graphql(restaurantListMutation, { name: "restaurantListMutation" })
+)(ClientHomePage);
