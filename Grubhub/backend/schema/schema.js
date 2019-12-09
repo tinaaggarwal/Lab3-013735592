@@ -2,15 +2,7 @@ var express = require('express');
 var app = express();
 const graphql = require("graphql");
 var mysql = require("mysql");
-// var pool = mysql.createPool({
-//   connectionLimit: 100,
-//   port: "3306",
-//   host: "lab3-grubhub.cv9vraaep5ay.us-west-2.rds.amazonaws.com",
-//   user: "root",
-//   password: "root.1234",
-//   database: "grubhub",
-//   debug: false
-// });
+
 var pool = mysql.createPool({
     connectionLimit: 100,
     host: 'localhost',
