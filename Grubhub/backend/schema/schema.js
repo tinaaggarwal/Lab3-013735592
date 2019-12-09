@@ -1,3 +1,5 @@
+var express = require('express');
+var app = express();
 const graphql = require("graphql");
 var mysql = require("mysql");
 // var pool = mysql.createPool({
@@ -9,7 +11,6 @@ var mysql = require("mysql");
 //   database: "grubhub",
 //   debug: false
 // });
-
 var pool = mysql.createPool({
     connectionLimit: 100,
     host: 'localhost',
@@ -77,20 +78,62 @@ const OwnerType = new GraphQLObjectType({
   })
 });
 
+const RestaurantType = new GraphQLObjectType({
+  name: "RestaurantType",
+  fields: () => ({
+    id: { type: GraphQLID },
+    r_id: { type: GraphQLInt },
+    rest_name: { type: GraphQLString },
+    rest_image: { type: GraphQLString },
+    cuisine: { type: GraphQLString },
+    rest_zip_code: { type: GraphQLString },
+  })
+});
+
+const itemType = new GraphQLObjectType({
+  name: "Item",
+  fields: () => ({
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    rate: { type: GraphQLInt },
+    description: { type: GraphQLString },
+    image: { type: GraphQLString },
+    section: { type: GraphQLString }
+  })
+});
+
+const restaurantMenuType = new GraphQLObjectType({
+  name: "Menu",
+  fields: () => ({
+    section: { type: GraphQLString },
+    id: { type: GraphQLString },
+    items: { type: new GraphQLList(itemType) }
+  })
+});
+
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
-    user: {
-      type: ClientType,
-      args: { id: { type: GraphQLID } },
+    restaurantList: {
+      type: new GraphQLList(RestaurantType),
       resolve(parent, args) {
-        return Users.findOne({
-          where: {
-            email: args.id
-          }
-        }).then(user => {
-          return user;
-        });
+        var sql = "SELECT rest_name, rest_image, cuisine, rest_zip_code, r_id from owner_profile";
+        console.log('Hereeeeeee', sql);
+        return pool.getConnection(function (err, pool) {
+            if (err) {
+                return err;
+            } else {
+                return pool.query(sql, function (err, result) {
+                    if (err) {
+                        return err;
+                    } else {
+                        console.log('Here', JSON.parse(JSON.stringify(result)))
+                        // return JSON.parse(JSON.stringify(result));
+                        return result;
+                    }
+                });
+            }
+        })
       }
     }
   }
@@ -258,7 +301,65 @@ const Mutation = new GraphQLObjectType({
           return result;
         });
       }
-    }
+    },
+    restaurantList: {
+      type: new GraphQLList(RestaurantType),
+      resolve(parent, args) {
+        var sql = "SELECT rest_name, rest_image, cuisine, rest_zip_code, r_id from owner_profile";
+        console.log('Hereeeeeee', sql);
+        return pool.getConnection(function (err, pool) {
+            if (err) {
+                return err;
+            } else {
+                return pool.query(sql, function (err, result) {
+                    if (err) {
+                        return err;
+                    } else {
+                        console.log(JSON.parse(JSON.stringify(result)));
+                        return result;
+                    }
+                });
+            }
+        });
+      }
+    },
+    getRestaurantMenu: {
+      type: new GraphQLList(restaurantMenuType),
+      args: { restaurant_id: { type: GraphQLID } },
+      resolve(parent, args) {
+        return restaurantService
+          .getRestaurantMenu(args.restaurant_id)
+          .then(menu => {
+            console.log("here", menu);
+            return menu;
+          });
+      }
+    },
+    getItem: {
+      type: itemType,
+      args: { item_id: { type: GraphQLID } },
+      resolve(parent, args) {
+        return itemService.getItemDetails(args.item_id).then(item => {
+          return item;
+        });
+      }
+    },
+    addItem: {
+      type: itemType,
+      args: {
+        name: { type: GraphQLString },
+        rate: { type: GraphQLString },
+        description: { type: GraphQLString },
+        image: { type: GraphQLString },
+        section: { type: GraphQLString },
+        restaurant_id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        return itemService.addItem(args).then(item => {
+          return item;
+        });
+      }
+    },
   }
 });
 
